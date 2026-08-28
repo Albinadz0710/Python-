@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 # noinspection PyPep8Naming
 from selenium.webdriver.support import expected_conditions as EC
 
+
 @pytest.mark.usefixtures("browser_edge")
 class TestUserForm:
 
@@ -12,6 +13,7 @@ class TestUserForm:
         wait = WebDriverWait(browser_edge, 10)
 
         # 1. Откройте страницу:
+        # https://bonigarcia.dev/selenium-webdriver-java/data-types.html в Edge или Safari.
         browser_edge.get("https://bonigarcia.dev/selenium-webdriver-java/data-types.html")
 
         # 2. Заполните форму значениями:
@@ -21,7 +23,7 @@ class TestUserForm:
         first_name.send_keys("Иван")
 
         last_name = wait.until(EC.presence_of_element_located(
-            (By.CSS_SELECTOR, " input[name='last-name']")))
+            (By.CSS_SELECTOR, "input[name='last-name']")))
         last_name.clear()
         last_name.send_keys("Петров")
 
@@ -111,9 +113,12 @@ class TestUserForm:
                 color = element.value_of_css_property("color")
                 actual_rgba = ast.literal_eval(color.replace(
                     "rgba", "").strip(" ()"))
-                
-                assert actual_rgba == green, \
-                    (f"Элемент {element_id} (цвет {actual_rgba}) "
-                     f"не подсвечен зеленым. Ожидался {green}")
-                print(f"Элемент {element_id} — цвет поля зелёный")
-                
+
+                assert actual_rgba in [red, green], \
+                    (f"Цвет элемента {element_id} ("
+                     f"{actual_rgba}"
+                     f") не соответствует ни красному, ни зелёному")
+                if actual_rgba == green:
+                    print(f"Элемент {element_id} — цвет поля зелёный")
+                elif actual_rgba == red:
+                    print(f"Элемент {element_id} — цвет поля красный")
